@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
+using UnityEditor.OSXStandalone;
 
 namespace Editor
 {
@@ -17,16 +18,45 @@ namespace Editor
         public static void BuildAll()
         {
             BuildMacOS();
+            // BuildMacOSArm64();
             BuildWindows();
             BuildLinux();
         }
 
-        [MenuItem("Build/Standalone/macOS")]
+        [MenuItem("Build/Standalone/macOS (Intel)")]
         public static void BuildMacOS()
         {
-            Debug.Log("Build macOS");
-            Build(BuildTarget.StandaloneOSX, targetDirName: "macOS");
+            Debug.Log("Build macOS (Intel)");
+            var originalArchitecture = UserBuildSettings.architecture;
+            try
+            {
+                UserBuildSettings.architecture = MacOSArchitecture.x64;
+                Build(BuildTarget.StandaloneOSX, targetDirName: "macOS");
+            }
+            finally
+            {
+                UserBuildSettings.architecture = originalArchitecture;
+            }
         }
+
+        /*
+        // TODO: macOS Apple Silicon
+        [MenuItem("Build/Standalone/macOS (Apple Silicon)")]
+        public static void BuildMacOSArm64()
+        {
+            Debug.Log("Build macOS (Apple Silicon)");
+            var originalArchitecture = UserBuildSettings.architecture;
+            try
+            {
+                UserBuildSettings.architecture = MacOSArchitecture.ARM64;
+                Build(BuildTarget.StandaloneOSX, targetDirName: "macOS (Apple Silicon)");
+            }
+            finally
+            {
+                UserBuildSettings.architecture = originalArchitecture;
+            }
+        }
+        */
 
         [MenuItem("Build/Standalone/Windows")]
         public static void BuildWindows()
